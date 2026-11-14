@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GTA VI launch night countdown</title>
+<meta name="description" content="Countdown to GTA VI launch night in your own time zone, with a get-ready checklist.">
+<style>
+:root{--bg:#0f0d14;--card:#1a1722;--line:#2c2738;--text:#f1edf7;--muted:#a69fb4;--accent:#ff4f8b;--accent2:#ffb347}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+main{flex:1;width:100%;max-width:560px;margin:0 auto;padding:36px 16px 24px;text-align:center}
+h1{margin:0 0 4px;font-size:1.5rem;line-height:1.2;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:0 0 26px;color:var(--muted);font-size:.95rem}
+.clock{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 10px}
+.unit{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 2px 12px}
+.num{display:block;font-size:clamp(2.5rem,14vw,4.6rem);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.lab{display:block;margin-top:8px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em}
+#live{display:none;margin:0 0 10px;padding:26px 12px;background:var(--card);border:1px solid var(--accent);border-radius:14px;font-size:clamp(1.8rem,9vw,3rem);font-weight:800;line-height:1.15}
+.zone{margin:0 0 28px;color:var(--muted);font-size:.85rem;min-height:1.3em}
+.list{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px;margin:0 0 24px}
+.list h2{margin:12px 0 4px;font-size:1rem}
+.list label{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--line);font-size:1.05rem;cursor:pointer}
+.list label:first-of-type{border-top:0}
+.list input{width:26px;height:26px;flex:none;accent-color:var(--accent)}
+.list input:checked+span{color:var(--muted);text-decoration:line-through}
+#ready{margin:0;padding:0 0 12px;color:var(--accent2);font-size:.9rem;min-height:1.4em}
+.btn{display:block;padding:17px;border-radius:14px;background:var(--accent);color:#fff;font-size:1.15rem;font-weight:700;text-decoration:none}
+.btn:active{opacity:.85}
+footer{padding:18px 16px 30px;color:var(--muted);font-size:.8rem;text-align:center;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<main>
+ <h1>GTA VI launch night</h1>
+ <p class="sub">Counting down to midnight on November 19</p>
+
+ <div class="clock" id="clock" role="timer" aria-label="Time left until launch">
+  <div class="unit"><span class="num" id="d">--</span><span class="lab">Days</span></div>
+  <div class="unit"><span class="num" id="h">--</span><span class="lab">Hours</span></div>
+  <div class="unit"><span class="num" id="m">--</span><span class="lab">Minutes</span></div>
+  <div class="unit"><span class="num" id="s">--</span><span class="lab">Seconds</span></div>
+ </div>
+ <div id="live">It's launch night.</div>
+ <p class="zone" id="zone"></p>
+
+ <div class="list">
+  <h2>Ready for midnight?</h2>
+  <label><input type="checkbox" data-k="preload"><span>Game pre-loaded</span></label>
+  <label><input type="checkbox" data-k="storage"><span>Storage free</span></label>
+  <label><input type="checkbox" data-k="controller"><span>Controller charged</span></label>
+  <p id="ready"></p>
+ </div>
+
+ <!-- ===== PASTE YOUR ANSWERS PAGE LINK BETWEEN THE QUOTES BELOW ===== -->
+ <a class="btn" href="https://example.com/your-answers-page">Day one answers</a>
+</main>
+
+<footer>Unofficial fan page. Not affiliated with or endorsed by Rockstar Games or Take-Two Interactive.</footer>
+
+<script>
+(function(){
+ // Midnight at the start of November 19, 2026 in the visitor's own time zone
+ var target=new Date(2026,10,19,0,0,0).getTime();
+ var $=function(id){return document.getElementById(id)};
+ function pad(n){return n<10?'0'+n:''+n}
+ function tick(){
+  var left=target-Date.now();
+  if(left<=0){$('clock').style.display='none';$('live').style.display='block';clearInterval(timer);return}
+  var t=Math.floor(left/1000);
+  $('d').textContent=Math.floor(t/86400);
+  $('h').textContent=pad(Math.floor(t%86400/3600));
+  $('m').textContent=pad(Math.floor(t%3600/60));
+  $('s').textContent=pad(t%60);
+ }
+ var timer=setInterval(tick,1000);tick();
+ try{var tz=Intl.DateTimeFormat().resolvedOptions().timeZone;if(tz)$('zone').textContent='Your time zone: '+tz.replace(/_/g,' ')}catch(e){}
+
+ // Checklist: ticks are remembered on this device when the browser allows it
+ var boxes=[].slice.call(document.querySelectorAll('.list input')),KEY='launchChecklist',saved={};
+ try{saved=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+ function update(){
+  var n=boxes.filter(function(b){return b.checked}).length;
+  $('ready').textContent=n===boxes.length?'All set. See you at midnight.':'';
+ }
+ boxes.forEach(function(b){
+  b.checked=!!saved[b.dataset.k];
+  b.addEventListener('change',function(){
+   saved[b.dataset.k]=b.checked;
+   try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}
+   update();
+  });
+ });
+ update();
+})();
+</script>
+</body>
+</html>
