@@ -9,90 +9,200 @@
 :root{--bg:#0f0d14;--card:#1a1722;--line:#2c2738;--text:#f1edf7;--muted:#a69fb4;--accent:#ff4f8b;--accent2:#ffb347}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
-main{flex:1;width:100%;max-width:560px;margin:0 auto;padding:36px 16px 24px;text-align:center}
-h1{margin:0 0 4px;font-size:1.5rem;line-height:1.2;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{margin:0 0 26px;color:var(--muted);font-size:.95rem}
-.clock{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 10px}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;overflow-x:hidden}
+button{font:inherit;color:inherit}
+.sky{position:absolute;top:0;left:0;right:0;height:340px;overflow:hidden;pointer-events:none;z-index:0;
+ background:radial-gradient(120% 90% at 50% 0%,rgba(255,79,139,.28),rgba(255,179,71,.08) 45%,transparent 70%)}
+.sun{position:absolute;left:50%;top:-110px;width:300px;height:300px;margin-left:-150px;border-radius:50%;opacity:.5;
+ background:linear-gradient(180deg,var(--accent2),var(--accent));
+ -webkit-mask:repeating-linear-gradient(180deg,#000 0 16px,transparent 16px 22px);mask:repeating-linear-gradient(180deg,#000 0 16px,transparent 16px 22px)}
+.top{position:relative;z-index:1;display:flex;justify-content:flex-end;gap:6px;max-width:560px;width:100%;margin:0 auto;padding:12px 16px 0}
+.lang{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(26,23,34,.8);font-size:.85rem;font-weight:600;cursor:pointer}
+.lang[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+main{position:relative;z-index:1;flex:1;width:100%;max-width:560px;margin:0 auto;padding:22px 16px 24px;text-align:center}
+h1{margin:0 0 4px;font-size:1.6rem;line-height:1.2;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:0 0 24px;color:#d3ccdf;font-size:.95rem}
+#clockBtn{display:block;width:100%;padding:0;margin:0 0 8px;border:0;background:none;cursor:pointer}
+.clock{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .unit{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 2px 12px}
 .num{display:block;font-size:clamp(2.5rem,14vw,4.6rem);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .lab{display:block;margin-top:8px;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em}
-#live{display:none;margin:0 0 10px;padding:26px 12px;background:var(--card);border:1px solid var(--accent);border-radius:14px;font-size:clamp(1.8rem,9vw,3rem);font-weight:800;line-height:1.15}
-.zone{margin:0 0 28px;color:var(--muted);font-size:.85rem;min-height:1.3em}
+#live{display:none;margin:0 0 8px;padding:26px 12px;background:var(--card);border:1px solid var(--accent);border-radius:14px;font-size:clamp(1.8rem,9vw,3rem);font-weight:800;line-height:1.15}
+.hint{margin:0 0 10px;color:var(--muted);font-size:.82rem}
+#exact{display:none;text-align:left;background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:12px 16px;margin:0 0 12px;font-size:.95rem}
+#exact dt{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;margin-top:8px}
+#exact dt:first-child{margin-top:0}
+#exact dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 24px}
+.ghost{padding:12px 8px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:.92rem;font-weight:600;cursor:pointer;text-decoration:none;color:var(--text);display:block}
+.ghost:active,.btn:active{opacity:.85}
 .list{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px;margin:0 0 24px}
-.list h2{margin:12px 0 4px;font-size:1rem}
+.head{display:flex;justify-content:space-between;align-items:baseline;margin:12px 0 8px}
+.head h2{margin:0;font-size:1rem}
+.head span{color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s}
 .list label{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--line);font-size:1.05rem;cursor:pointer}
 .list label:first-of-type{border-top:0}
 .list input{width:26px;height:26px;flex:none;accent-color:var(--accent)}
 .list input:checked+span{color:var(--muted);text-decoration:line-through}
 #ready{margin:0;padding:0 0 12px;color:var(--accent2);font-size:.9rem;min-height:1.4em}
 .btn{display:block;padding:17px;border-radius:14px;background:var(--accent);color:#fff;font-size:1.15rem;font-weight:700;text-decoration:none}
-.btn:active{opacity:.85}
-footer{padding:18px 16px 30px;color:var(--muted);font-size:.8rem;text-align:center;border-top:1px solid var(--line)}
+footer{position:relative;z-index:1;padding:18px 16px 30px;color:var(--muted);font-size:.8rem;text-align:center;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
-<main>
- <h1>GTA VI launch night</h1>
- <p class="sub">Counting down to midnight on November 19</p>
+<div class="sky" aria-hidden="true"><div class="sun"></div></div>
 
- <div class="clock" id="clock" role="timer" aria-label="Time left until launch">
-  <div class="unit"><span class="num" id="d">--</span><span class="lab">Days</span></div>
-  <div class="unit"><span class="num" id="h">--</span><span class="lab">Hours</span></div>
-  <div class="unit"><span class="num" id="m">--</span><span class="lab">Minutes</span></div>
-  <div class="unit"><span class="num" id="s">--</span><span class="lab">Seconds</span></div>
+<div class="top">
+ <button class="lang" type="button" data-lang="de">DE</button>
+ <button class="lang" type="button" data-lang="en">EN</button>
+</div>
+
+<main>
+ <h1 data-t="title">GTA VI launch night</h1>
+ <p class="sub" data-t="sub">Counting down to midnight on November 19</p>
+
+ <button id="clockBtn" type="button" aria-expanded="false" aria-controls="exact">
+  <div class="clock" id="clock">
+   <div class="unit"><span class="num" id="d">--</span><span class="lab" data-t="days">Days</span></div>
+   <div class="unit"><span class="num" id="h">--</span><span class="lab" data-t="hours">Hours</span></div>
+   <div class="unit"><span class="num" id="m">--</span><span class="lab" data-t="minutes">Minutes</span></div>
+   <div class="unit"><span class="num" id="s">--</span><span class="lab" data-t="seconds">Seconds</span></div>
+  </div>
+  <div id="live" data-t="live">It's launch night.</div>
+ </button>
+ <p class="hint" data-t="hint">Tap the numbers for the exact time</p>
+
+ <dl id="exact">
+  <dt data-t="exStart">Countdown ends</dt><dd id="exTarget"></dd>
+  <dt data-t="exNow">Your time now</dt><dd id="exNow"></dd>
+  <dt data-t="exZone">Your time zone</dt><dd id="exZone"></dd>
+ </dl>
+
+ <div class="row">
+  <button class="ghost" id="share" type="button" data-t="share">Share page</button>
+  <button class="ghost" id="cal" type="button" data-t="cal">Add to calendar</button>
  </div>
- <div id="live">It's launch night.</div>
- <p class="zone" id="zone"></p>
 
  <div class="list">
-  <h2>Ready for midnight?</h2>
-  <label><input type="checkbox" data-k="preload"><span>Game pre-loaded</span></label>
-  <label><input type="checkbox" data-k="storage"><span>Storage free</span></label>
-  <label><input type="checkbox" data-k="controller"><span>Controller charged</span></label>
+  <div class="head"><h2 data-t="listTitle">Ready for midnight?</h2><span id="prog">0/3</span></div>
+  <div class="bar"><i id="barFill"></i></div>
+  <label><input type="checkbox" data-k="preload"><span data-t="c1">Game pre-loaded</span></label>
+  <label><input type="checkbox" data-k="storage"><span data-t="c2">Storage free</span></label>
+  <label><input type="checkbox" data-k="controller"><span data-t="c3">Controller charged</span></label>
   <p id="ready"></p>
  </div>
 
  <!-- ===== PASTE YOUR ANSWERS PAGE LINK BETWEEN THE QUOTES BELOW ===== -->
- <a class="btn" href="https://example.com/your-answers-page">Day one answers</a>
+ <a class="btn" href="https://example.com/your-answers-page" data-t="btn">Day one answers</a>
 </main>
 
-<footer>Unofficial fan page. Not affiliated with or endorsed by Rockstar Games or Take-Two Interactive.</footer>
+<footer data-t="foot">Unofficial fan page. Not affiliated with or endorsed by Rockstar Games or Take-Two Interactive.</footer>
 
 <script>
 (function(){
- // Midnight at the start of November 19, 2026 in the visitor's own time zone
- var target=new Date(2026,10,19,0,0,0).getTime();
+ var T={
+  en:{title:"GTA VI launch night",sub:"Counting down to midnight on November 19",days:"Days",hours:"Hours",minutes:"Minutes",seconds:"Seconds",
+      live:"It's launch night.",hint:"Tap the numbers for the exact time",exStart:"Countdown ends",exNow:"Your time now",exZone:"Your time zone",
+      share:"Share page",shared:"Link copied",cal:"Add to calendar",listTitle:"Ready for midnight?",c1:"Game pre-loaded",c2:"Storage free",c3:"Controller charged",
+      ready:"All set. See you at midnight.",btn:"Day one answers",calName:"GTA VI launch night",
+      foot:"Unofficial fan page. Not affiliated with or endorsed by Rockstar Games or Take-Two Interactive.",doc:"GTA VI launch night countdown"},
+  de:{title:"GTA VI Launch-Nacht",sub:"Countdown bis Mitternacht am 19. November",days:"Tage",hours:"Stunden",minutes:"Minuten",seconds:"Sekunden",
+      live:"Es ist Launch-Nacht.",hint:"Tippe auf die Zahlen für die genaue Uhrzeit",exStart:"Countdown endet",exNow:"Deine Zeit jetzt",exZone:"Deine Zeitzone",
+      share:"Seite teilen",shared:"Link kopiert",cal:"In den Kalender",listTitle:"Bereit für Mitternacht?",c1:"Spiel vorab geladen",c2:"Speicher frei",c3:"Controller geladen",
+      ready:"Alles bereit. Bis Mitternacht.",btn:"Antworten zum ersten Tag",calName:"GTA VI Launch-Nacht",
+      foot:"Inoffizielle Fanseite. Keine Verbindung zu Rockstar Games oder Take-Two Interactive und nicht von ihnen unterstützt.",doc:"GTA VI Launch-Nacht Countdown"}
+ };
  var $=function(id){return document.getElementById(id)};
+ function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+ function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+
+ // Midnight at the start of November 19, 2026 in the visitor's own time zone
+ var targetDate=new Date(2026,10,19,0,0,0),target=targetDate.getTime();
+
+ var lang=get('launchLang');
+ if(!T[lang])lang=((navigator.language||'en').toLowerCase().indexOf('de')===0)?'de':'en';
+ var zone='';try{zone=Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){}
+
+ function fmt(date,withSec){
+  var o={weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'};
+  if(withSec)o.second='2-digit';
+  try{return date.toLocaleString(lang==='de'?'de-DE':'en-GB',o)}catch(e){return date.toString()}
+ }
+ function applyLang(){
+  var s=T[lang];
+  document.documentElement.lang=lang;document.title=s.doc;
+  [].forEach.call(document.querySelectorAll('[data-t]'),function(el){el.textContent=s[el.getAttribute('data-t')]});
+  [].forEach.call(document.querySelectorAll('.lang'),function(b){b.setAttribute('aria-pressed',b.getAttribute('data-lang')===lang?'true':'false')});
+  $('exTarget').textContent=fmt(targetDate,false);
+  $('exZone').textContent=zone?zone.replace(/_/g,' '):'–';
+  update();tick();
+ }
+ [].forEach.call(document.querySelectorAll('.lang'),function(b){
+  b.addEventListener('click',function(){lang=b.getAttribute('data-lang');set('launchLang',lang);applyLang()});
+ });
+
+ // Countdown
  function pad(n){return n<10?'0'+n:''+n}
+ var done=false;
  function tick(){
+  $('exNow').textContent=fmt(new Date(),true);
   var left=target-Date.now();
-  if(left<=0){$('clock').style.display='none';$('live').style.display='block';clearInterval(timer);return}
+  if(left<=0){if(!done){done=true;$('clock').style.display='none';$('live').style.display='block'}return}
   var t=Math.floor(left/1000);
   $('d').textContent=Math.floor(t/86400);
   $('h').textContent=pad(Math.floor(t%86400/3600));
   $('m').textContent=pad(Math.floor(t%3600/60));
   $('s').textContent=pad(t%60);
  }
- var timer=setInterval(tick,1000);tick();
- try{var tz=Intl.DateTimeFormat().resolvedOptions().timeZone;if(tz)$('zone').textContent='Your time zone: '+tz.replace(/_/g,' ')}catch(e){}
+ setInterval(tick,1000);
+
+ // Exact time panel
+ $('clockBtn').addEventListener('click',function(){
+  var open=$('exact').style.display==='block';
+  $('exact').style.display=open?'none':'block';
+  this.setAttribute('aria-expanded',open?'false':'true');
+ });
+
+ // Share
+ $('share').addEventListener('click',function(){
+  var btn=this,url=location.href.split('#')[0];
+  function ok(){btn.textContent=T[lang].shared;setTimeout(function(){btn.textContent=T[lang].share},1800)}
+  if(navigator.share){navigator.share({title:T[lang].doc,url:url}).catch(function(){});return}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(ok,function(){window.prompt('',url)});return}
+  window.prompt('',url);
+ });
+
+ // Calendar file: a "floating" time, so it lands on midnight in each visitor's own zone
+ $('cal').addEventListener('click',function(){
+  var ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//launch-night//countdown//EN','BEGIN:VEVENT',
+   'UID:launch-night-20261119@countdown','DTSTAMP:20261114T000000Z','DTSTART:20261119T000000','DTEND:20261119T010000',
+   'SUMMARY:'+T[lang].calName,'URL:'+location.href.split('#')[0],
+   'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:'+T[lang].calName,'END:VALARM',
+   'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  try{
+   var a=document.createElement('a');
+   a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
+   a.download='launch-night.ics';document.body.appendChild(a);a.click();a.remove();
+  }catch(e){}
+ });
 
  // Checklist: ticks are remembered on this device when the browser allows it
- var boxes=[].slice.call(document.querySelectorAll('.list input')),KEY='launchChecklist',saved={};
- try{saved=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+ var boxes=[].slice.call(document.querySelectorAll('.list input')),saved={};
+ try{saved=JSON.parse(get('launchChecklist'))||{}}catch(e){}
  function update(){
   var n=boxes.filter(function(b){return b.checked}).length;
-  $('ready').textContent=n===boxes.length?'All set. See you at midnight.':'';
+  $('prog').textContent=n+'/'+boxes.length;
+  $('barFill').style.width=(n/boxes.length*100)+'%';
+  $('ready').textContent=n===boxes.length?T[lang].ready:'';
  }
  boxes.forEach(function(b){
-  b.checked=!!saved[b.dataset.k];
-  b.addEventListener('change',function(){
-   saved[b.dataset.k]=b.checked;
-   try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}
-   update();
-  });
+  b.checked=!!saved[b.getAttribute('data-k')];
+  b.addEventListener('change',function(){saved[b.getAttribute('data-k')]=b.checked;set('launchChecklist',JSON.stringify(saved));update()});
  });
- update();
+
+ applyLang();
 })();
 </script>
 </body>
